@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_game_list"
+        android:icon="@drawable/ic_baseline_list_24"
+        android:title="@string/title_game_list" />
+
+    <item
+        android:id="@+id/navigation_random_game"
+        android:icon="@drawable/ic_dice_6_mdi_24dp"
+        android:title="@string/title_random_game" />
+
+    <item
+        android:id="@+id/navigation_add_game"
+        android:icon="@drawable/ic_baseline_add_box_24"
+        android:title="@string/title_add_game" />
+
+</menu>
