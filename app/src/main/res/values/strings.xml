@@ -2,5 +2,9 @@
     <string name="app_name">Board Wizard</string>
     <string name="game_list">Game List</string>
     <string name="randomizer">Randomizer</string>
-    <string name="player_list">Player List</string>
+    <string name="game_plays">Game Plays</string>
+    <string name="submit">Submit</string>
+    <string name="bgg_username">BGG Username</string>
+    <string name="bgg_username_required">BGG Username Required</string>
+    <string name="bgg_username_info">Your BoardGameGeek.com username is used to load in your games and game plays.</string>
 </resources>

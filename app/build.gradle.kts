@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -57,18 +55,32 @@ android {
 }
 
 dependencies {
-
     implementation(Dependencies.coreKtx)
     implementation(Dependencies.hilt)
-    implementation(Dependencies.lifecycle)
+    implementation(Dependencies.lifecycleKtx)
+    implementation(Dependencies.liveDataKtx)
+    implementation(Dependencies.timber)
+    implementation(Dependencies.dataStore)
+
+    implementation(Dependencies.Room.runtime)
+    implementation(Dependencies.Room.roomKtx)
+
+    implementation(Dependencies.bggApiClient)
+    implementation(Dependencies.fazioUtils)
 
     implementation(Dependencies.Compose.activity)
+    implementation(Dependencies.Compose.coilCompose)
     implementation(Dependencies.Compose.hiltNavigation)
+    implementation(Dependencies.Compose.lottieCompose)
     implementation(Dependencies.Compose.material)
     implementation(Dependencies.Compose.navigation)
     implementation(Dependencies.Compose.ui)
     implementation(Dependencies.Compose.uiToolingPreview)
+    implementation(Dependencies.Compose.runtimeLiveData)
+    implementation(Dependencies.Compose.viewModel)
+    implementation(Dependencies.Accompanist.swipeToRefresh)
 
+    kapt(Dependencies.Room.roomCompiler)
     kapt(Dependencies.hiltCompiler)
 
     testImplementation(Dependencies.Testing.jUnit)
@@ -77,4 +89,8 @@ dependencies {
     androidTestImplementation(Dependencies.Testing.composeUITest)
 
     debugImplementation(Dependencies.Compose.uiTooling)
+}
+
+kapt {
+    correctErrorTypes = true
 }

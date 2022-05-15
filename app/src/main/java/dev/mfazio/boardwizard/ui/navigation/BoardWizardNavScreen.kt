@@ -1,7 +1,8 @@
-package dev.mfazio.boardwizard
+package dev.mfazio.boardwizard.ui.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import dev.mfazio.boardwizard.R
 
 sealed class BoardWizardNavScreen(
     val route: String,
@@ -17,12 +18,12 @@ sealed class BoardWizardNavScreen(
     object Randomizer : BoardWizardNavScreen(
         "Randomizer",
         R.string.randomizer,
-        R.drawable.ic_baseline_view_list_24
+        R.drawable.ic_baseline_casino_24
     )
 
-    object PlayerList : BoardWizardNavScreen(
-        "PlayerList",
-        R.string.player_list,
-        R.drawable.ic_baseline_view_list_24
+    object GamePlays : BoardWizardNavScreen(
+        "GamePlays",
+        R.string.game_plays,
+        R.drawable.ic_baseline_playlist_play_24
     )
 }

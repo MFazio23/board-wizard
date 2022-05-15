@@ -2,15 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dev.mfazio.boardwizard">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".BoardWizardApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_board_game_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_board_game_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BoardWizard">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.BoardWizard">
             <intent-filter>
@@ -20,5 +23,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
