@@ -8,8 +8,8 @@ import dev.mfazio.boardwizard.data.entities.BoardGameEntity
 import dev.mfazio.boardwizard.data.entities.GamePlayEntity
 import dev.mfazio.boardwizard.data.settings.BoardWizardSettings
 import dev.mfazio.boardwizard.models.BoardGame
+import dev.mfazio.boardwizard.models.BoardGameFilter
 import dev.mfazio.boardwizard.models.GamePlay
-import dev.mfazio.boardwizard.ui.screens.gameplays.GamePlaysScreen
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.time.LocalDate
@@ -62,6 +62,15 @@ class BoardWizardRepositoryImpl @Inject constructor(
 
         return dao.addOrUpdateGames(games).size
     }
+
+    override fun getFilteredBoardGames(filters: List<BoardGameFilter>): LiveData<List<BoardGame>> =
+        Transformations.map(getAllBoardGames()) { games ->
+            games.filter { game ->
+                filters.all {
+                    it.filterFunction(game)
+                }
+            }
+        }
 
     override suspend fun isUserNameNeeded(): Boolean = boardWizardSettings.userName() == null
 

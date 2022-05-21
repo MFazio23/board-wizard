@@ -2,6 +2,7 @@ package dev.mfazio.boardwizard.data
 
 import androidx.lifecycle.LiveData
 import dev.mfazio.boardwizard.models.BoardGame
+import dev.mfazio.boardwizard.models.BoardGameFilter
 import dev.mfazio.boardwizard.models.GamePlay
 import kotlinx.coroutines.flow.Flow
 
@@ -11,6 +12,7 @@ interface BoardWizardRepository {
     fun getBGGUserNameLiveData(): LiveData<String?>
     fun getAllBoardGames(): LiveData<List<BoardGame>>
     fun getBoardGameById(id: Int): LiveData<BoardGame>
+    fun getFilteredBoardGames(filters: List<BoardGameFilter>): LiveData<List<BoardGame>>
 
     suspend fun getBoardGameCount(): Int
     suspend fun hasSavedBoardGames(): Boolean

@@ -7,5 +7,4 @@ import javax.inject.Inject
 @HiltViewModel
 class RandomizerViewModel @Inject constructor() : ViewModel() {
 
-    val title = "Randomizer ViewModel Title"
 }

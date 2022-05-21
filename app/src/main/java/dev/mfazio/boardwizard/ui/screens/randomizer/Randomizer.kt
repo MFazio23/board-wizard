@@ -37,13 +37,11 @@ fun Randomizer(
         },
         floatingActionButtonPosition = FabPosition.End,
     ) {
-
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(viewModel.title)
             RandomizerMain(
                 game = gameName,
                 isLoading = isLoading,
-                modifier = Modifier.weight(1F, true),
+                modifier = Modifier.weight(weight = 1F, fill = true),
                 onStartSearching = {
                     onClearGame()
                     isLoading = true
