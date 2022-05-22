@@ -29,8 +29,13 @@ class BoardWizardRepositoryImpl @Inject constructor(
     override fun getBGGUserNameLiveData(): LiveData<String?> =
         boardWizardSettings.userNameLiveData()
 
-    override fun getAllBoardGames(): LiveData<List<BoardGame>> =
-        Transformations.map(dao.getAll()) { entities ->
+    override suspend fun getAllBoardGames(): List<BoardGame> =
+        dao.getAllBoardGames().sortedBy { it.title }.map { entity ->
+            BoardGame.fromEntity(entity)
+        }
+
+    override fun getAllBoardGamesLiveData(): LiveData<List<BoardGame>> =
+        Transformations.map(dao.getAllBoardGamesLiveData()) { entities ->
             entities.sortedBy { it.title }.map { BoardGame.fromEntity(it) }
         }
 
@@ -63,12 +68,10 @@ class BoardWizardRepositoryImpl @Inject constructor(
         return dao.addOrUpdateGames(games).size
     }
 
-    override fun getFilteredBoardGames(filters: List<BoardGameFilter>): LiveData<List<BoardGame>> =
-        Transformations.map(getAllBoardGames()) { games ->
-            games.filter { game ->
-                filters.all {
-                    it.filterFunction(game)
-                }
+    override suspend fun getFilteredBoardGames(filters: List<BoardGameFilter>): List<BoardGame> =
+        getAllBoardGames().filter { game ->
+            filters.all {
+                it.filterFunction(game)
             }
         }
 

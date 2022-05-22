@@ -10,11 +10,11 @@ sealed class BoardGameFilter(val filterFunction: (BoardGame) -> Boolean) {
     })
 
     class FilteredWeights(private vararg val weights: Weights) : BoardGameFilter({ game ->
-        weights.any { game.weight == null || it.isInWeight(game.weight) }
+        weights.none() || weights.any { game.weight == null || it.isInWeight(game.weight) }
     })
 
     class FilteredPlayTimes(private vararg val playTimes: PlayTimes) : BoardGameFilter({ game ->
-        playTimes.any { game.maxTime == null || it.isInLength(game.maxTime) }
+        playTimes.none() || playTimes.any { game.maxTime == null || it.isInLength(game.maxTime) }
     })
 
 

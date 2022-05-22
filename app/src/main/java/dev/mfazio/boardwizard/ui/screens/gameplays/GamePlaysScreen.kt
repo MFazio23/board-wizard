@@ -11,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -18,6 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -66,24 +68,47 @@ fun GamePlaysScreenItem(gamePlay: GamePlay) {
                 .size(48.dp),
         )
         Column {
-            Text(text = gamePlay.gameName, fontSize = 18.sp)
             Row {
-                Column(modifier = Modifier.padding(4.dp)) {
-                    Text(text = gamePlay.playDate.toString(), fontSize = 14.sp)
+                Text(
+                    text = gamePlay.gameName,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    fontSize = 24.sp,
+                    modifier = Modifier.weight(1F)
+                )
+                Box {
+                    Text(
+                        text = gamePlay.playDate.toString(),
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    )
                 }
+            }
+            Row {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp)
+                        .padding(end = 8.dp)
+                        .weight(1F)
                 ) {
-                    Text(text = "Winner: ${gamePlay.winnerName ?: "N/A"}", fontSize = 16.sp)
                     Text(
-                        text = gamePlay.comments ?: "",
-                        fontSize = 14.sp,
-                        fontStyle = FontStyle.Italic
+                        text = "Winner: ${gamePlay.winnerName ?: "N/A"}",
+                        fontSize = 16.sp,
+                        modifier = Modifier
                     )
-                    Text(text = gamePlay.location, fontSize = 12.sp)
+                    Box(modifier = Modifier.fillMaxHeight()) {
+                        Text(
+                            text = "Location: ${gamePlay.location}",
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(top = 4.dp).align(Alignment.BottomStart)
+                        )
+                    }
                 }
+                Text(
+                    text = gamePlay.comments ?: "",
+                    fontSize = 14.sp,
+                    fontStyle = FontStyle.Italic
+                )
             }
         }
     }

@@ -10,9 +10,10 @@ interface BoardWizardRepository {
     suspend fun getBGGUserName(): String?
     suspend fun getBGGUserNameFlow(): Flow<String?>
     fun getBGGUserNameLiveData(): LiveData<String?>
-    fun getAllBoardGames(): LiveData<List<BoardGame>>
+    suspend fun getAllBoardGames(): List<BoardGame>
+    fun getAllBoardGamesLiveData(): LiveData<List<BoardGame>>
     fun getBoardGameById(id: Int): LiveData<BoardGame>
-    fun getFilteredBoardGames(filters: List<BoardGameFilter>): LiveData<List<BoardGame>>
+    suspend fun getFilteredBoardGames(filters: List<BoardGameFilter>): List<BoardGame>
 
     suspend fun getBoardGameCount(): Int
     suspend fun hasSavedBoardGames(): Boolean

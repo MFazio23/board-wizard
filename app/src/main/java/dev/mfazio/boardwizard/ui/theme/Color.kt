@@ -13,3 +13,7 @@ val PrussianBlue = Color(0xFF172A3A)
 val WarmBlack = Color(0xFF004346)
 val MountainMeadow = Color(0xFF09BC8A)
 
+val FilterGreen = Color(0xFF09BC8A)
+val FilterYellow = Color(0xFF95BC09)
+val FilterRed = Color(0xFFBC093B)
+

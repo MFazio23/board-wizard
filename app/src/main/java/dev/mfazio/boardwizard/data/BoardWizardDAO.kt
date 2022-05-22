@@ -9,7 +9,10 @@ import dev.mfazio.boardwizard.data.entities.GamePlayWithGame
 @Dao
 interface BoardWizardDAO {
     @Query("SELECT * FROM board_games")
-    fun getAll(): LiveData<List<BoardGameEntity>>
+    suspend fun getAllBoardGames(): List<BoardGameEntity>
+
+    @Query("SELECT * FROM board_games")
+    fun getAllBoardGamesLiveData(): LiveData<List<BoardGameEntity>>
 
     @Query("SELECT * FROM board_games WHERE bggId = :id")
     fun getGameById(id: Int): LiveData<BoardGameEntity>

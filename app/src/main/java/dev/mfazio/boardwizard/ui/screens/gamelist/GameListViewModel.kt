@@ -14,7 +14,7 @@ import javax.inject.Inject
 class GameListViewModel @Inject constructor(
     private val boardWizardRepository: BoardWizardRepository,
 ) : ViewModel() {
-    val games = boardWizardRepository.getAllBoardGames()
+    val games = boardWizardRepository.getAllBoardGamesLiveData()
 
     val userName = boardWizardRepository.getBGGUserNameLiveData()
 

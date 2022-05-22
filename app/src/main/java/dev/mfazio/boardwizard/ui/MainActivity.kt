@@ -88,6 +88,7 @@ fun BoardWizardRoot(
                 BoardWizardNavHost(navController = navController)
                 if (userName.isNullOrEmpty()) {
                     //TODO: Show snackbar for loading games
+                    // TODO: move the AlertDialog to its own composable
                     var bggUserNameInput by remember { mutableStateOf("") }
                     AlertDialog(
                         title = {
@@ -239,13 +240,13 @@ fun BoardWizardNavHost(
     NavHost(
         navController = navController,
         startDestination = BoardWizardNavScreen.Randomizer.route,
+        modifier = modifier,
     ) {
         composable(BoardWizardNavScreen.GameList.route) {
             GameListScreen()
         }
         composable(BoardWizardNavScreen.Randomizer.route) {
             Randomizer(
-                null,
                 {}
             )
         }
