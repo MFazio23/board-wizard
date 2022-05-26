@@ -12,6 +12,7 @@ import dev.mfazio.boardwizard.models.BoardGameFilter
 import dev.mfazio.boardwizard.ui.components.filter.BoardGameFilterSettings
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class RandomizerViewModel @Inject constructor(
