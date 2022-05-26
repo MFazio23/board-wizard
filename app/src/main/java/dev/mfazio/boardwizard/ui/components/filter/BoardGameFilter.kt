@@ -40,21 +40,27 @@ fun BottomFilterSheet(
                     text = "Light",
                     selectedBackgroundColor = FilterGreen,
                     selectedContentColor = textColor,
-                    isSelected = false,
+                    isSelected = startingSettings.weights.contains(
+                        BoardGameFilter.Weights.Light
+                    ),
                 ),
                 FilterChipItem(
                     value = BoardGameFilter.Weights.Medium,
                     text = "Medium",
                     selectedBackgroundColor = FilterYellow,
                     selectedContentColor = textColor,
-                    isSelected = false,
+                    isSelected = startingSettings.weights.contains(
+                        BoardGameFilter.Weights.Medium
+                    ),
                 ),
                 FilterChipItem(
                     value = BoardGameFilter.Weights.Heavy,
                     text = "Heavy",
                     selectedBackgroundColor = FilterRed,
                     selectedContentColor = textColor,
-                    isSelected = false,
+                    isSelected = startingSettings.weights.contains(
+                        BoardGameFilter.Weights.Heavy
+                    ),
                 ),
             )
         )
@@ -67,21 +73,27 @@ fun BottomFilterSheet(
                     text = "Short",
                     selectedBackgroundColor = FilterGreen,
                     selectedContentColor = textColor,
-                    isSelected = false,
+                    isSelected = startingSettings.playingTimes.contains(
+                        BoardGameFilter.PlayTimes.Short
+                    ),
                 ),
                 FilterChipItem(
                     value = BoardGameFilter.PlayTimes.Medium,
                     text = "Medium",
                     selectedBackgroundColor = FilterYellow,
                     selectedContentColor = textColor,
-                    isSelected = false,
+                    isSelected = startingSettings.playingTimes.contains(
+                        BoardGameFilter.PlayTimes.Medium
+                    ),
                 ),
                 FilterChipItem(
                     value = BoardGameFilter.PlayTimes.Long,
                     text = "Long",
                     selectedBackgroundColor = FilterRed,
                     selectedContentColor = textColor,
-                    isSelected = false,
+                    isSelected = startingSettings.playingTimes.contains(
+                        BoardGameFilter.PlayTimes.Long
+                    ),
                 ),
             )
         )
@@ -226,6 +238,8 @@ fun <T> BottomFilterChips(
     filterValues: List<FilterChipItem<T>>,
     onChipTapped: (FilterChipItem<T>) -> Unit,
 ) {
+    val isLightTheme = MaterialTheme.colors.isLight
+
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Text(text = labelText)
         LazyRow {
@@ -238,7 +252,7 @@ fun <T> BottomFilterChips(
                     selected = filterValue.isSelected,
                     modifier = Modifier.padding(8.dp),
                     colors = ChipDefaults.filterChipColors(
-                        backgroundColor = Color.DarkGray,
+                        backgroundColor = if (isLightTheme) Color.Gray else Color.DarkGray,
                         contentColor = filterValue.selectedBackgroundColor,
                         selectedBackgroundColor = filterValue.selectedBackgroundColor,
                         selectedContentColor = filterValue.selectedContentColor,
@@ -260,7 +274,8 @@ fun BottomFilterSheetButtons(
         Button(
             onClick = onReset,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Gray
+                backgroundColor = Color.Gray,
+                contentColor = MaterialTheme.colors.onPrimary,
             ),
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {

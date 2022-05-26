@@ -11,6 +11,7 @@ import dev.mfazio.boardwizard.models.BoardGame
 import dev.mfazio.boardwizard.models.BoardGameFilter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class RandomizerViewModel @Inject constructor(
@@ -34,5 +35,9 @@ class RandomizerViewModel @Inject constructor(
 
             currentGame = filteredGames.shuffled().firstOrNull()
         }
+    }
+
+    fun clearCurrentGame() {
+        currentGame = null
     }
 }

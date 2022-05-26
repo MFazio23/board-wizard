@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,6 +28,7 @@ import coil.compose.AsyncImage
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import dev.mfazio.boardwizard.models.GamePlay
+import java.time.LocalDate
 
 @Composable
 fun GamePlaysScreen(
@@ -96,11 +98,13 @@ fun GamePlaysScreenItem(gamePlay: GamePlay) {
                         fontSize = 16.sp,
                         modifier = Modifier
                     )
-                    Box(modifier = Modifier.fillMaxHeight()) {
+                    Box(modifier = Modifier) {
                         Text(
                             text = "Location: ${gamePlay.location}",
                             fontSize = 12.sp,
-                            modifier = Modifier.padding(top = 4.dp).align(Alignment.BottomStart)
+                            modifier = Modifier
+                                .padding(top = 4.dp)
+                                .align(Alignment.BottomStart)
                         )
                     }
                 }
@@ -113,6 +117,27 @@ fun GamePlaysScreenItem(gamePlay: GamePlay) {
         }
     }
     Divider(color = Color.Black, thickness = 1.dp)
+}
+
+@Preview
+@Composable
+fun GamePlaysScreenItemPreview() {
+    GamePlaysScreenItem(gamePlay = GamePlay(
+        gamePlayId = 1,
+        gameName = "My City",
+        playDate = LocalDate.now(),
+        location = "F.",
+        thumbnailUrl = "https://cf.geekdo-images.com/vjLg-uWRx3SICFZQehHqkA__thumb/img/-0dgIVp3J1dIi1dD7WddEfEctzw=/fit-in/200x150/filters:strip_icc()/pic5428585.jpg",
+        winnerName = "Michael",
+        comments = """
+            Episode 24
+            
+            Final scoring:
+            Tim - 54
+            Emily - 42
+            Michael - 37
+        """.trimIndent()
+    ))
 }
 
 private const val bggBaseUrl = "https://boardgamegeek.com/play/details/"
