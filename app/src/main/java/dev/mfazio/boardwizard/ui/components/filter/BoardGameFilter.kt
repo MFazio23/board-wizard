@@ -244,6 +244,12 @@ fun BottomFilterSlider(
         "${sliderValue.toInt()}+"
     } else sliderValue.toInt().toString()
 
+    val textColor = if (isEnabled) {
+        MaterialTheme.colors.onSurface
+    } else {
+        Color.Gray
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -251,6 +257,7 @@ fun BottomFilterSlider(
         Row(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "$labelText - $sliderValueText",
+                color = textColor,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -284,8 +291,14 @@ fun <T> BottomFilterChips(
 ) {
     val isLightTheme = MaterialTheme.colors.isLight
 
+    val textColor = if (filterValues.any { it.isSelected }) {
+        MaterialTheme.colors.onSurface
+    } else {
+        Color.Gray
+    }
+
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(text = labelText)
+        Text(text = labelText, color = textColor)
         LazyRow {
             items(filterValues) { filterValue ->
                 FilterChip(
