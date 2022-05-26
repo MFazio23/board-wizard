@@ -69,7 +69,13 @@ class BoardWizardRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getFilteredBoardGames(filters: List<BoardGameFilter>): List<BoardGame> =
-        getAllBoardGames().filter { game ->
+        getFilteredBoardGames(getAllBoardGames(), filters)
+
+    override suspend fun getFilteredBoardGames(
+        games: List<BoardGame>,
+        filters: List<BoardGameFilter>
+    ): List<BoardGame> =
+        games.filter { game ->
             filters.all {
                 it.filterFunction(game)
             }

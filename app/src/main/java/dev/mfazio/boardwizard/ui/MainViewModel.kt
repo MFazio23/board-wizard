@@ -1,10 +1,14 @@
 package dev.mfazio.boardwizard.ui
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.mfazio.boardwizard.data.BoardWizardRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -17,6 +21,9 @@ class MainViewModel @Inject constructor(
     val userName: LiveData<String?>
         get() = _userName
     private val _userName = boardWizardRepository.getBGGUserNameLiveData()
+
+    var snackBarMessage by mutableStateOf<String?>(null)
+        private set
 
     fun updateUserName(userName: String) = viewModelScope.launch {
         boardWizardRepository.updateUserName(userName)
@@ -32,8 +39,19 @@ class MainViewModel @Inject constructor(
 
         Timber.tag("BGG").i("updateGamesIfNecessary: BG Count=$gameCount")
         if (!isUserNameNeeded && !hasSavedBoardGames) {
+            snackBarMessage = "Loading games from BGG..."
             Timber.tag("BGG").i("Loading games from BGG")
-            boardWizardRepository.loadGamesFromBGG()
+            val loadedGameCount = boardWizardRepository.loadGamesFromBGG()
+
+            if (loadedGameCount == 0) {
+                snackBarMessage = "Error loading games from BGG. Please restart the app."
+                delay(2000)
+                snackBarMessage = null
+            } else {
+                snackBarMessage = "Games loaded successfully!"
+                delay(2000)
+                snackBarMessage = null
+            }
         } else {
             Timber
                 .tag("BGG")

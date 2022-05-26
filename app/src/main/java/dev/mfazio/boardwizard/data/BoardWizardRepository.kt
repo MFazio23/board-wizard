@@ -14,6 +14,10 @@ interface BoardWizardRepository {
     fun getAllBoardGamesLiveData(): LiveData<List<BoardGame>>
     fun getBoardGameById(id: Int): LiveData<BoardGame>
     suspend fun getFilteredBoardGames(filters: List<BoardGameFilter>): List<BoardGame>
+    suspend fun getFilteredBoardGames(
+        games: List<BoardGame>,
+        filters: List<BoardGameFilter>
+    ): List<BoardGame>
 
     suspend fun getBoardGameCount(): Int
     suspend fun hasSavedBoardGames(): Boolean

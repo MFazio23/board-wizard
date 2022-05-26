@@ -1,10 +1,12 @@
 @file:OptIn(ExperimentalMaterialApi::class)
 
-package dev.mfazio.boardwizard.ui.screens.randomizer
+package dev.mfazio.boardwizard.ui.components.filter
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -30,7 +32,9 @@ fun BottomFilterSheet(
     val textColor = MaterialTheme.colors.onSurface
 
     var players by remember { mutableStateOf(startingSettings.players.toFloat()) }
-    var minimumAge by remember { mutableStateOf(startingSettings.minimumAge.toFloat()) }
+    var isPlayersEnabled by remember { mutableStateOf(startingSettings.isPlayersEnabled) }
+    var youngestPlayer by remember { mutableStateOf(startingSettings.youngestPlayer.toFloat()) }
+    var isYoungestPlayerEnabled by remember { mutableStateOf(startingSettings.isYoungestPlayerEnabled) }
 
     var weightChips by remember {
         mutableStateOf(
@@ -40,21 +44,27 @@ fun BottomFilterSheet(
                     text = "Light",
                     selectedBackgroundColor = FilterGreen,
                     selectedContentColor = textColor,
-                    isSelected = false,
+                    isSelected = startingSettings.weights.contains(
+                        BoardGameFilter.Weights.Light
+                    ),
                 ),
                 FilterChipItem(
                     value = BoardGameFilter.Weights.Medium,
                     text = "Medium",
                     selectedBackgroundColor = FilterYellow,
                     selectedContentColor = textColor,
-                    isSelected = false,
+                    isSelected = startingSettings.weights.contains(
+                        BoardGameFilter.Weights.Medium
+                    ),
                 ),
                 FilterChipItem(
                     value = BoardGameFilter.Weights.Heavy,
                     text = "Heavy",
                     selectedBackgroundColor = FilterRed,
                     selectedContentColor = textColor,
-                    isSelected = false,
+                    isSelected = startingSettings.weights.contains(
+                        BoardGameFilter.Weights.Heavy
+                    ),
                 ),
             )
         )
@@ -67,21 +77,27 @@ fun BottomFilterSheet(
                     text = "Short",
                     selectedBackgroundColor = FilterGreen,
                     selectedContentColor = textColor,
-                    isSelected = false,
+                    isSelected = startingSettings.playingTimes.contains(
+                        BoardGameFilter.PlayTimes.Short
+                    ),
                 ),
                 FilterChipItem(
                     value = BoardGameFilter.PlayTimes.Medium,
                     text = "Medium",
                     selectedBackgroundColor = FilterYellow,
                     selectedContentColor = textColor,
-                    isSelected = false,
+                    isSelected = startingSettings.playingTimes.contains(
+                        BoardGameFilter.PlayTimes.Medium
+                    ),
                 ),
                 FilterChipItem(
                     value = BoardGameFilter.PlayTimes.Long,
                     text = "Long",
                     selectedBackgroundColor = FilterRed,
                     selectedContentColor = textColor,
-                    isSelected = false,
+                    isSelected = startingSettings.playingTimes.contains(
+                        BoardGameFilter.PlayTimes.Long
+                    ),
                 ),
             )
         )
@@ -91,15 +107,20 @@ fun BottomFilterSheet(
         modifier = Modifier
             .padding(vertical = 16.dp)
             .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
     ) {
         BottomFilterSheetHeader(onCloseIconTapped)
         BottomFilterSheetList(
             players = players,
-            minimumAge = minimumAge,
+            isPlayersEnabled = isPlayersEnabled,
+            playersEnabledChanged = { enabled -> isPlayersEnabled = enabled },
+            youngestPlayer = youngestPlayer,
+            isYoungestPlayerEnabled = isYoungestPlayerEnabled,
+            youngestPlayerEnabledChanged = { enabled -> isYoungestPlayerEnabled = enabled },
             weightChips = weightChips,
             playTimeChips = playTimeChips,
             playersUpdated = { players = round(it) },
-            minimumAgeUpdated = { minimumAge = round(it) },
+            youngestPlayerUpdated = { youngestPlayer = round(it) },
             weightChipTapped = { tappedChip ->
                 weightChips = weightChips.map { chip ->
                     if (tappedChip.value == chip.value) {
@@ -118,7 +139,7 @@ fun BottomFilterSheet(
         BottomFilterSheetButtons(
             onReset = {
                 players = startingSettings.players.toFloat()
-                minimumAge = startingSettings.minimumAge.toFloat()
+                youngestPlayer = startingSettings.youngestPlayer.toFloat()
                 weightChips = weightChips.map { chip ->
                     chip.copy(isSelected = startingSettings.weights.contains(chip.value))
                 }
@@ -130,7 +151,9 @@ fun BottomFilterSheet(
                 onFilter(
                     BoardGameFilterSettings(
                         players = players.toInt(),
-                        minimumAge = minimumAge.toInt(),
+                        isPlayersEnabled = isPlayersEnabled,
+                        youngestPlayer = youngestPlayer.toInt(),
+                        isYoungestPlayerEnabled = isYoungestPlayerEnabled,
                         weights = weightChips.filter { it.isSelected }.map { it.value },
                         playingTimes = playTimeChips.filter { it.isSelected }.map { it.value },
                     )
@@ -166,25 +189,33 @@ fun BottomFilterSheetHeader(onCloseIconTapped: () -> Unit) {
 @Composable
 fun BottomFilterSheetList(
     players: Float,
-    minimumAge: Float,
+    isPlayersEnabled: Boolean,
+    playersEnabledChanged: (Boolean) -> Unit,
+    youngestPlayer: Float,
+    isYoungestPlayerEnabled: Boolean,
+    youngestPlayerEnabledChanged: (Boolean) -> Unit,
     weightChips: List<FilterChipItem<BoardGameFilter.Weights>>,
     playTimeChips: List<FilterChipItem<BoardGameFilter.PlayTimes>>,
     playersUpdated: (Float) -> Unit,
-    minimumAgeUpdated: (Float) -> Unit,
+    youngestPlayerUpdated: (Float) -> Unit,
     weightChipTapped: (FilterChipItem<BoardGameFilter.Weights>) -> Unit,
     playTimeChipTapped: (FilterChipItem<BoardGameFilter.PlayTimes>) -> Unit,
 ) {
     Column(modifier = Modifier.padding(16.dp)) {
         BottomFilterSlider(
             labelText = "Players",
+            isEnabled = isPlayersEnabled,
+            onChangeEnabled = playersEnabledChanged,
             sliderValue = players,
             onSliderValueChange = playersUpdated,
             sliderValueRange = 1F..10F
         )
         BottomFilterSlider(
-            labelText = "Minimum Age",
-            sliderValue = minimumAge,
-            onSliderValueChange = minimumAgeUpdated,
+            labelText = "Youngest Player",
+            isEnabled = isYoungestPlayerEnabled,
+            onChangeEnabled = youngestPlayerEnabledChanged,
+            sliderValue = youngestPlayer,
+            onSliderValueChange = youngestPlayerUpdated,
             sliderValueRange = 2F..18F
         )
         BottomFilterChips(
@@ -203,6 +234,8 @@ fun BottomFilterSheetList(
 @Composable
 fun BottomFilterSlider(
     labelText: String,
+    isEnabled: Boolean,
+    onChangeEnabled: (Boolean) -> Unit,
     sliderValue: Float,
     onSliderValueChange: (Float) -> Unit,
     sliderValueRange: ClosedFloatingPointRange<Float>
@@ -210,12 +243,35 @@ fun BottomFilterSlider(
     val sliderValueText = if (sliderValue == sliderValueRange.endInclusive) {
         "${sliderValue.toInt()}+"
     } else sliderValue.toInt().toString()
-    Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(text = "$labelText - $sliderValueText")
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "$labelText - $sliderValueText",
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(text = "Enabled", modifier = Modifier.align(Alignment.CenterVertically))
+                    Checkbox(
+                        checked = isEnabled,
+                        onCheckedChange = onChangeEnabled,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                }
+            }
+        }
         Slider(
             value = sliderValue,
             onValueChange = onSliderValueChange,
             valueRange = sliderValueRange,
+            enabled = isEnabled,
         )
     }
 }
@@ -226,6 +282,8 @@ fun <T> BottomFilterChips(
     filterValues: List<FilterChipItem<T>>,
     onChipTapped: (FilterChipItem<T>) -> Unit,
 ) {
+    val isLightTheme = MaterialTheme.colors.isLight
+
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Text(text = labelText)
         LazyRow {
@@ -238,7 +296,7 @@ fun <T> BottomFilterChips(
                     selected = filterValue.isSelected,
                     modifier = Modifier.padding(8.dp),
                     colors = ChipDefaults.filterChipColors(
-                        backgroundColor = Color.DarkGray,
+                        backgroundColor = if (isLightTheme) Color.Gray else Color.DarkGray,
                         contentColor = filterValue.selectedBackgroundColor,
                         selectedBackgroundColor = filterValue.selectedBackgroundColor,
                         selectedContentColor = filterValue.selectedContentColor,
@@ -260,7 +318,8 @@ fun BottomFilterSheetButtons(
         Button(
             onClick = onReset,
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Gray
+                backgroundColor = Color.Gray,
+                contentColor = MaterialTheme.colors.onPrimary,
             ),
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
@@ -285,6 +344,8 @@ fun BottomFilterSheetButtons(
 fun BottomFilterSliderPreview() {
     BottomFilterSlider(
         labelText = "Players",
+        isEnabled = false,
+        onChangeEnabled = {},
         sliderValue = 5F,
         onSliderValueChange = { },
         sliderValueRange = 1F..10F

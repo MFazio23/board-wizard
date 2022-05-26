@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.mfazio.boardwizard.data.BoardWizardRepository
 import dev.mfazio.boardwizard.models.BoardGame
 import dev.mfazio.boardwizard.models.BoardGameFilter
+import dev.mfazio.boardwizard.ui.components.filter.BoardGameFilterSettings
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,9 +25,13 @@ class RandomizerViewModel @Inject constructor(
     fun getRandomGame() {
         viewModelScope.launch {
             val filteredGames = boardWizardRepository.getFilteredBoardGames(
-                listOf(
-                    BoardGameFilter.PlayerCount(boardGameFilterSettings.players),
-                    BoardGameFilter.MinimumAge(boardGameFilterSettings.minimumAge),
+                listOfNotNull(
+                    if (boardGameFilterSettings.isPlayersEnabled) {
+                        BoardGameFilter.PlayerCount(boardGameFilterSettings.players)
+                    } else null,
+                    if (boardGameFilterSettings.isYoungestPlayerEnabled) {
+                        BoardGameFilter.YoungestPlayer(boardGameFilterSettings.youngestPlayer)
+                    } else null,
                     BoardGameFilter.FilteredWeights(*boardGameFilterSettings.weights.toTypedArray()),
                     BoardGameFilter.FilteredPlayTimes(*boardGameFilterSettings.playingTimes.toTypedArray()),
                 )
@@ -34,5 +39,9 @@ class RandomizerViewModel @Inject constructor(
 
             currentGame = filteredGames.shuffled().firstOrNull()
         }
+    }
+
+    fun clearCurrentGame() {
+        currentGame = null
     }
 }

@@ -1,8 +1,8 @@
 package dev.mfazio.boardwizard.models
 
 sealed class BoardGameFilter(val filterFunction: (BoardGame) -> Boolean) {
-    class MinimumAge(private val minAge: Int) : BoardGameFilter({ game ->
-        game.communityMinAge == null || game.communityMinAge <= minAge
+    class YoungestPlayer(private val youngestPlayer: Int) : BoardGameFilter({ game ->
+        game.communityMinAge == null || game.communityMinAge <= youngestPlayer
     })
 
     class PlayerCount(private val players: Int) : BoardGameFilter({ game ->

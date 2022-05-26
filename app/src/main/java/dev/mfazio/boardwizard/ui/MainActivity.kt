@@ -1,6 +1,7 @@
 package dev.mfazio.boardwizard.ui
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -17,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -27,12 +28,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.mfazio.boardwizard.R
+import dev.mfazio.boardwizard.ui.components.filter.BoardGameFilterSettings
 import dev.mfazio.boardwizard.ui.navigation.BoardWizardNavScreen
 import dev.mfazio.boardwizard.ui.screens.gamelist.GameListScreen
 import dev.mfazio.boardwizard.ui.screens.gameplays.GamePlaysScreen
 import dev.mfazio.boardwizard.ui.screens.randomizer.Randomizer
 import dev.mfazio.boardwizard.ui.theme.BoardWizardTheme
 import dev.mfazio.boardwizard.ui.theme.PlayFontFamily
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -60,7 +63,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun BoardWizardRoot(
-    mainViewModel: MainViewModel = viewModel(),
+    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val navController = rememberNavController()
 
@@ -70,6 +73,16 @@ fun BoardWizardRoot(
     val userName by mainViewModel.userName.observeAsState(defaultUserName)
 
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val scope = rememberCoroutineScope()
+
+    var boardGameFilterSettings by remember { mutableStateOf(BoardGameFilterSettings.default) }
+
+    mainViewModel.snackBarMessage?.let { snackbarMessage ->
+        scope.launch {
+            snackbarHostState.showSnackbar(snackbarMessage)
+        }
+    }
 
     Scaffold(
         topBar = { BoardWizardTopBar(navController) },
@@ -84,79 +97,56 @@ fun BoardWizardRoot(
                 bottom = innerPadding.calculateBottomPadding(),
             )
         ) {
-            Column {
-                BoardWizardNavHost(navController = navController)
-                if (userName.isNullOrEmpty()) {
-                    //TODO: Show snackbar for loading games
-                    // TODO: move the AlertDialog to its own composable
-                    var bggUserNameInput by remember { mutableStateOf("") }
-                    AlertDialog(
-                        title = {
-                            Text(text = stringResource(id = R.string.bgg_username_required))
-                        },
-                        text = {
-                            Column {
-                                Text(text = stringResource(id = R.string.bgg_username_info))
-                                TextField(
-                                    modifier = Modifier.padding(top = 8.dp),
-                                    value = bggUserNameInput,
-                                    label = { Text(stringResource(id = R.string.bgg_username)) },
-                                    onValueChange = { bggUserNameInput = it }
-                                )
-                            }
-                        },
-                        onDismissRequest = {},
-                        confirmButton = {
-                            TextButton(onClick = {
-                                Timber.tag("Board Wizard").i("BGGUserName = $bggUserNameInput")
-                                if (bggUserNameInput.isNotEmpty()) {
-                                    mainViewModel.updateUserName(bggUserNameInput)
-
-                                    /*snackbarHostState.showSnackbar(
-                                        "Loading games from BoardGameGeek..."
-                                    )
-                                    val games = boardWizardRepository.loadGamesFromBGG()
-                                    if (games.any()) {
-                                        snackbarHostState.showSnackbar(
-                                            "${games.count()} game(s) loaded successfully!"
-                                        )
-                                    } else {
-                                        snackbarHostState.showSnackbar(
-                                            "Error loading games, please try again."
-                                        )
-                                    }*/
-                                }
-                            }) {
-                                Text(text = stringResource(id = R.string.submit))
-                            }
+            BoardWizardNavHost(
+                navController = navController,
+                boardGameFilterSettings = boardGameFilterSettings,
+                onFiltersUpdated = { boardGameFilterSettings = it }
+            )
+            if (userName.isNullOrEmpty()) {
+                var bggUserNameInput by remember { mutableStateOf("") }
+                BoardWizardBGGNameDialog(
+                    userName = bggUserNameInput,
+                    onUpdateUserName = { userName -> bggUserNameInput = userName },
+                    onConfirmUserName = {
+                        Timber.tag("Board Wizard").i("BGGUserName = $bggUserNameInput")
+                        if (bggUserNameInput.isNotEmpty()) {
+                            mainViewModel.updateUserName(bggUserNameInput)
                         }
-                    )
-                }
+                    }
+                )
             }
         }
     }
+}
 
-    /*LaunchedEffect(bggUserName) {
-        composableScope.launch {
-            Timber.i("Looking for username")
-            bggUserName = boardWizardRepository.getBGGUserNameFlow().firstOrNull()
-            Timber.i("Username result: $bggUserName")
-            checkedForUserName = true
-
-            if (bggUserName != null) {
-                val games = boardWizardRepository.loadGamesFromBGG()
-                if (games.any()) {
-                    snackbarHostState.showSnackbar(
-                        "${games.count()} game(s) loaded successfully!"
-                    )
-                } else {
-                    snackbarHostState.showSnackbar(
-                        "Error loading games, please try again."
-                    )
-                }
+@Composable
+fun BoardWizardBGGNameDialog(
+    userName: String,
+    onUpdateUserName: (String) -> Unit,
+    onConfirmUserName: () -> Unit,
+) {
+    AlertDialog(
+        title = {
+            Text(text = stringResource(id = R.string.bgg_username_required))
+        },
+        text = {
+            Column {
+                Text(text = stringResource(id = R.string.bgg_username_info))
+                TextField(
+                    modifier = Modifier.padding(top = 8.dp),
+                    value = userName,
+                    label = { Text(stringResource(id = R.string.bgg_username)) },
+                    onValueChange = onUpdateUserName
+                )
+            }
+        },
+        onDismissRequest = {},
+        confirmButton = {
+            TextButton(onClick = onConfirmUserName) {
+                Text(text = stringResource(id = R.string.submit))
             }
         }
-    }*/
+    )
 }
 
 @Composable
@@ -166,7 +156,9 @@ fun BoardWizardTopBar(navController: NavHostController) {
         backgroundColor = Color.Transparent,
         actions = {
             // RowScope here, so these icons will be placed horizontally
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+
+            }) {
                 Icon(Icons.Filled.Settings, contentDescription = "Settings icon")
             }
         },
@@ -236,6 +228,8 @@ fun BoardWizardBottomNav(navController: NavHostController) {
 fun BoardWizardNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    boardGameFilterSettings: BoardGameFilterSettings,
+    onFiltersUpdated: (BoardGameFilterSettings) -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -243,11 +237,15 @@ fun BoardWizardNavHost(
         modifier = modifier,
     ) {
         composable(BoardWizardNavScreen.GameList.route) {
-            GameListScreen()
+            GameListScreen(
+                boardGameFilterSettings = boardGameFilterSettings,
+                onFiltersUpdated = onFiltersUpdated,
+            )
         }
         composable(BoardWizardNavScreen.Randomizer.route) {
             Randomizer(
-                {}
+                boardGameFilterSettings = boardGameFilterSettings,
+                onFiltersUpdated = onFiltersUpdated,
             )
         }
         composable(BoardWizardNavScreen.GamePlays.route) {

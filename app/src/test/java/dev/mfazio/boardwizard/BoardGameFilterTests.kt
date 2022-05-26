@@ -18,7 +18,7 @@ class BoardGameFilterTests {
     fun `Age filter of 4 returns fewer games`() {
         val filteredGames = filterGames(
             testGames,
-            listOf(BoardGameFilter.MinimumAge(4))
+            listOf(BoardGameFilter.YoungestPlayer(4))
         )
 
         assertEquals(7, filteredGames.size)
@@ -28,7 +28,7 @@ class BoardGameFilterTests {
     fun `Age filter of 10 returns fewer games`() {
         val filteredGames = filterGames(
             testGames,
-            listOf(BoardGameFilter.MinimumAge(10))
+            listOf(BoardGameFilter.YoungestPlayer(10))
         )
 
         assertEquals(89, filteredGames.size)
@@ -151,7 +151,7 @@ class BoardGameFilterTests {
             testGames,
             listOf(
                 BoardGameFilter.FilteredWeights(BoardGameFilter.Weights.Medium),
-                BoardGameFilter.MinimumAge(10)
+                BoardGameFilter.YoungestPlayer(10)
             )
         )
 
@@ -164,7 +164,7 @@ class BoardGameFilterTests {
             testGames,
             listOf(
                 BoardGameFilter.FilteredPlayTimes(BoardGameFilter.PlayTimes.Medium),
-                BoardGameFilter.MinimumAge(6)
+                BoardGameFilter.YoungestPlayer(6)
             )
         )
 
@@ -192,7 +192,7 @@ class BoardGameFilterTests {
             listOf(
                 BoardGameFilter.FilteredPlayTimes(BoardGameFilter.PlayTimes.Medium),
                 BoardGameFilter.FilteredWeights(BoardGameFilter.Weights.Medium),
-                BoardGameFilter.MinimumAge(8),
+                BoardGameFilter.YoungestPlayer(8),
             )
         )
 
@@ -206,7 +206,7 @@ class BoardGameFilterTests {
             listOf(
                 BoardGameFilter.FilteredPlayTimes(BoardGameFilter.PlayTimes.Medium),
                 BoardGameFilter.FilteredWeights(BoardGameFilter.Weights.Medium),
-                BoardGameFilter.MinimumAge(6),
+                BoardGameFilter.YoungestPlayer(6),
             )
         )
 
@@ -234,7 +234,7 @@ class BoardGameFilterTests {
             listOf(
                 BoardGameFilter.FilteredPlayTimes(BoardGameFilter.PlayTimes.Short),
                 BoardGameFilter.FilteredWeights(BoardGameFilter.Weights.Light),
-                BoardGameFilter.MinimumAge(8),
+                BoardGameFilter.YoungestPlayer(8),
                 BoardGameFilter.PlayerCount(6),
             )
         )
@@ -307,7 +307,7 @@ class BoardGameFilterTests {
                     BoardGameFilter.Weights.Medium,
                     BoardGameFilter.Weights.Heavy,
                 ),
-                BoardGameFilter.MinimumAge(12),
+                BoardGameFilter.YoungestPlayer(12),
             )
         )
 
@@ -327,7 +327,7 @@ class BoardGameFilterTests {
                     BoardGameFilter.Weights.Medium,
                     BoardGameFilter.Weights.Heavy,
                 ),
-                BoardGameFilter.MinimumAge(10),
+                BoardGameFilter.YoungestPlayer(10),
                 BoardGameFilter.PlayerCount(5),
             )
         )
@@ -346,7 +346,7 @@ class BoardGameFilterTests {
                 BoardGameFilter.FilteredWeights(
                     BoardGameFilter.Weights.Heavy,
                 ),
-                BoardGameFilter.MinimumAge(6),
+                BoardGameFilter.YoungestPlayer(6),
             )
         )
 

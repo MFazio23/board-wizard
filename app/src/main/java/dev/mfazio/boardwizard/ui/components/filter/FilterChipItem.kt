@@ -1,4 +1,4 @@
-package dev.mfazio.boardwizard.ui.screens.randomizer
+package dev.mfazio.boardwizard.ui.components.filter
 
 import androidx.compose.ui.graphics.Color
 
